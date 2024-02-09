@@ -49,16 +49,14 @@ def todo_post(request):
     
 
 @api_view(['DELETE'])
-def todo_delete(request):    
+def todo_delete(request, todo_id):
     if request.method == 'DELETE':
-        todo_id = request.data.get('id')
         try:
             todo = Todo.objects.get(id=todo_id)
             todo.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Todo.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
 
 @api_view(['PATCH'])        
 def todo_update(request):    
