@@ -33,24 +33,21 @@ def login(request):
 
 @api_view(['GET'])
 def todo_list(request): 
-    if request.method == 'GET':
-        todos = Todo.objects.all()
-        serializer = TodoSerializer(todos, many=True)
-        return Response(serializer.data)
+    todos = Todo.objects.all()
+    serializer = TodoSerializer(todos, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def todo_post(request):
-    if request.method == 'POST':
-        serializer = TodoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer = TodoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['DELETE'])
 def todo_delete(request, todo_id):
-    if request.method == 'DELETE':
         try:
             todo = Todo.objects.get(id=todo_id)
             todo.delete()
@@ -59,24 +56,34 @@ def todo_delete(request, todo_id):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['PATCH'])        
-def todo_update(request):    
-    if request.method == 'PATCH':
-        todo_id = request.data.get('id')
-        is_done = request.data.get('is_done')
-        try:
-            todo = Todo.objects.get(id=todo_id)
-            todo.is_done = is_done
-            todo.save()
-            serializer = TodoSerializer(todo)
-            return Response(serializer.data)
-        except Todo.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+def todo_update_done(request, todo_id):    
+    is_done = request.data.get('is_done')
+    try:
+        todo = Todo.objects.get(id=todo_id)
+        todo.is_done = is_done
+        todo.save()
+        serializer = TodoSerializer(todo)
+        return Response(serializer.data)
+    except Todo.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['PATCH'])  
+def todo_update_description(request, todo_id):    
+    description = request.data.get('description')
+    try:
+        todo = Todo.objects.get(id=todo_id)
+        todo.description = description
+        todo.save()
+        serializer = TodoSerializer(todo)
+        return Response(serializer.data)
+    except Todo.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
         
 @api_view(['DELETE'])
-def todo_delete_all(request):    
-    if request.method == 'DELETE':
-            todos = Todo.objects.all()
-            todos.delete()
+def todo_delete_all(request):
+    todos = Todo.objects.all()
+    todos.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
     
