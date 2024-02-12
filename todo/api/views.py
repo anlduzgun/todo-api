@@ -81,7 +81,7 @@ def todo_update_description(request, todo_id):
         
 @api_view(['DELETE'])
 def todo_delete_all(request):
-    todos = Todo.objects.all()
+    todos = Todo.objects.get(is_done= True)
     todos.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
